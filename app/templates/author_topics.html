@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Темы автора {{ author_name }} - Форум{% endblock %}
+{% block content %}
+<h2>Все темы автора: {{ author_name }}</h2>
+
+{% for topic in topics %}
+<div class="topic">
+    <h3><a href="/forum/topic/{{ topic._id }}">{{ topic.title }}</a></h3>
+    <div class="meta">Создано: {{ topic.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+    {% if topic.tags %}
+    <div class="tags">
+        Теги: 
+        {% for tag in topic.tags %}
+        <span class="tag"><a href="/forum/tag/{{ tag }}">{{ tag }}</a></span>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endfor %}
+
+{% if not topics %}
+<p>У автора {{ author_name }} пока нет тем.</p>
+{% endif %}
+{% endblock %}

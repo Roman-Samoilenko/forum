@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}{{ topic.title }} - Форум{% endblock %}
+{% block content %}
+<div class="topic">
+    <h2>{{ topic.title }}</h2>
+    <div class="meta">
+        Автор: <a href="/forum/author/{{ topic.author }}">{{ topic.author }}</a> | 
+        Создано: {{ topic.created_at.strftime('%d.%m.%Y %H:%M') }}
+    </div>
+    
+    {% if topic.content %}
+    <div style="margin: 20px 0; padding: 15px; background: #193523; border-radius: 5px;">
+        {{ topic.content }}
+    </div>
+    {% endif %}
+    
+    {% if topic.tags %}
+    <div class="tags">
+        Теги: 
+        {% for tag in topic.tags %}
+        <span class="tag"><a href="/forum/tag/{{ tag }}">{{ tag }}</a></span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if topic.links %}
+    <div style="margin-top: 15px;">
+        <strong>Связанные ключевые слова:</strong>
+        {% for link in topic.links %}
+        <span style="background: #000000; padding: 3px 8px; margin-right: 5px; border-radius: 3px; font-size: 12px;">{{ link }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Связанные темы (граф-навигация) -->
+{% if related_topics %}
+<div class="related">
+    <h3>🔗 Связанные темы</h3>
+    
+    {% if related_topics.by_author %}
+    <h4>Другие темы автора {{ topic.author }}:</h4>
+    {% for rel_topic in related_topics.by_author %}
+    <p>• <a href="/forum/topic/{{ rel_topic._id }}">{{ rel_topic.title }}</a></p>
+    {% endfor %}
+    {% endif %}
+    
+    {% if related_topics.by_tags %}
+    <h4>Темы с похожими тегами:</h4>
+    {% for rel_topic in related_topics.by_tags %}
+    <p>• <a href="/forum/topic/{{ rel_topic._id }}">{{ rel_topic.title }}</a></p>
+    {% endfor %}
+    {% endif %}
+    
+    {% if related_topics.by_links %}
+    <h4>Темы с похожими ключевыми словами:</h4>
+    {% for rel_topic in related_topics.by_links %}
+    <p>• <a href="/forum/topic/{{ rel_topic._id }}">{{ rel_topic.title }}</a></p>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+

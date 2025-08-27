@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Главная - Форум{% endblock %}
+{% block content %}
+<h2>Все темы форума</h2>
+
+{% for topic in topics %}
+<div class="topic">
+    <h3><a href="/forum/topic/{{ topic._id }}">{{ topic.title }}</a></h3>
+    <div class="meta">
+        Автор: <a href="/forum/author/{{ topic.author }}">{{ topic.author }}</a> | 
+        Создано: {{ topic.created_at.strftime('%d.%m.%Y %H:%M') }}
+    </div>
+    {% if topic.content %}
+    <p>{{ topic.content[:200] }}{% if topic.content|length > 200 %}...{% endif %}</p>
+    {% endif %}
+    {% if topic.tags %}
+    <div class="tags">
+        Теги: 
+        {% for tag in topic.tags %}
+        <span class="tag"><a href="/forum/tag/{{ tag }}">{{ tag }}</a></span>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endfor %}
+
+{% if not topics %}
+<p>Тем пока нет. <a href="/forum/new-topic">Создайте первую!</a></p>
+{% endif %}
+{% endblock %}

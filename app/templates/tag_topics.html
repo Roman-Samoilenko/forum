@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Темы с тегом {{ tag_name }} - Форум{% endblock %}
+{% block content %}
+<h2>Все темы с тегом: {{ tag_name }}</h2>
+
+{% for topic in topics %}
+<div class="topic">
+    <h3><a href="/forum/topic/{{ topic._id }}">{{ topic.title }}</a></h3>
+    <div class="meta">
+        Автор: <a href="/forum/author/{{ topic.author }}">{{ topic.author }}</a> | 
+        Создано: {{ topic.created_at.strftime('%d.%m.%Y %H:%M') }}
+    </div>
+</div>
+{% endfor %}
+
+{% if not topics %}
+<p>Тем с тегом "{{ tag_name }}" пока нет.</p>
+{% endif %}
+{% endblock %}

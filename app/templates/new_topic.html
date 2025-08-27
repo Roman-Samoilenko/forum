@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Новая тема - Форум{% endblock %}
+{% block content %}
+<h2>Создать новую тему</h2>
+
+<form method="post">
+    <label for="title">Заголовок темы:</label>
+    <input type="text" name="title" id="title" required>
+    
+    <label for="content">Содержание:</label>
+    <textarea name="content" id="content" rows="10" placeholder="Подробное описание темы..."></textarea>
+    
+    <label for="tags">Теги (через запятую):</label>
+    <input type="text" name="tags" id="tags" placeholder="dev, test, help">
+    
+    <label for="links">Ключевые слова для связи (через запятую):</label>
+    <input type="text" name="links" id="links" placeholder="разработка форума, mongodb, python">
+    
+    <button type="submit">Создать тему</button>
+</form>
+{% endblock %}

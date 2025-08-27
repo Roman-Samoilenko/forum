@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AIR.forum{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: rgba(0, 25, 0, 0.95);
+            --bg-hover: rgba(0, 35, 0, 0.8);
+            --neon-green: #00ff00;
+            --neon-cyan: #00ffff;
+            --neon-green-dim: #00cc00;
+            --neon-green-dark: #003300;
+            --text-primary: #bfffbf; /* Softened green for better readability */
+            --text-secondary: #76d676; /* Softer secondary text */
+            --text-dim: #03a003; /* Adjusted dim text for contrast */
+            --border-color: #003300;
+            --glow-green: rgba(0, 255, 0, 0.3);
+            --glow-cyan: rgba(0, 255, 255, 0.3);
+            --glow-green-strong: rgba(0, 255, 0, 0.6);
+        }
+
+        html {
+            background-color: var(--bg-primary);
+        }
+
+        body {
+            font-family: 'Fira Code', monospace;
+            background: 
+                linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%),
+                radial-gradient(circle at 30% 30%, rgba(0, 255, 0, 0.03) 0%, transparent 70%),
+                radial-gradient(circle at 70% 70%, rgba(0, 255, 255, 0.03) 0%, transparent 70%);
+            color: var(--text-primary);
+            line-height: 1.8; /* Increased line-height for readability */
+            min-height: 100vh;
+            position: relative;
+            font-size: 1rem;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(0, 255, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 0, 0.02) 0%, transparent 80%),
+                linear-gradient(45deg, rgba(0, 255, 0, 0.01) 0%, transparent 100%);
+            z-index: -1;
+            opacity: 0.7;
+        }
+
+        .header {
+            background: var(--bg-card);
+            border-bottom: 2px solid var(--neon-green);
+            padding: 20px 40px;
+            margin-bottom: 30px;
+            box-shadow: 
+                0 0 40px rgba(0, 255, 0, 0.15),
+                inset 0 2px 0 rgba(0, 255, 0, 0.1),
+                0 0 80px rgba(0, 255, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(25px);
+            animation: neonGlow 6s ease-in-out infinite;
+        }
+
+        @keyframes neonGlow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 40px rgba(0, 255, 0, 0.15),
+                    inset 0 2px 0 rgba(0, 255, 0, 0.1),
+                    0 0 80px rgba(0, 255, 0, 0.08);
+                border-color: var(--neon-green);
+            }
+            50% {
+                box-shadow: 
+                    0 0 60px rgba(0, 255, 0, 0.25),
+                    inset 0 2px 0 rgba(0, 255, 255, 0.15),
+                    0 0 120px rgba(0, 255, 0, 0.12);
+                border-color: var(--neon-cyan);
+            }
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            text-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1::before {
+            content: '>';
+            color: var(--neon-cyan);
+            margin-right: 8px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .header h1::after {
+            content: '_';
+            color: var(--neon-cyan);
+            margin-left: 8px;
+            animation: blink 1.2s infinite;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .nav {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+
+        .nav a::before {
+            content: '$ ';
+            color: var(--neon-cyan);
+            opacity: 0.7;
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+            transition: left 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: var(--neon-green);
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px var(--glow-green);
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+        }
+
+        .nav a:hover::after {
+            left: 100%;
+        }
+
+        .user-info {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .user-info::before {
+            content: '> ';
+            color: var(--neon-cyan);
+            opacity: 0.7;
+        }
+
+        .user-info strong {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+        }
+
+        main {
+            padding: 0 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: var(--neon-green);
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px var(--glow-green);
+        }
+
+        .topic {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(25px);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 0, 0.08),
+                inset 0 1px 0 rgba(0, 255, 0, 0.05);
+        }
+
+        .topic::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan), var(--neon-green));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .topic:hover {
+            transform: translateY(-2px);
+            border-color: var(--neon-green);
+            box-shadow: 
+                0 5px 25px rgba(0, 255, 0, 0.15),
+                0 0 40px rgba(0, 255, 0, 0.1),
+                inset 0 1px 0 rgba(0, 255, 0, 0.1);
+        }
+
+        .topic:hover::before {
+            opacity: 1;
+        }
+
+        .topic h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.3rem;
+        }
+
+        .topic h3 a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .topic h3 a:hover {
+            color: var(--neon-green);
+            text-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+        }
+
+        .meta {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .meta a {
+            color: var(--neon-green-dim);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .meta a:hover {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+        }
+
+        .tags {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* FIX 2: Corrected tag colors for better contrast */
+        .tag {
+            background: var(--neon-green-dark);
+            color: var(--text-secondary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: var(--neon-green);
+            color: var(--bg-primary); /* Use dark text on bright background */
+            border-color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            transform: scale(1.05);
+        }
+
+        .tag a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .related {
+            background: var(--bg-card);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            border: 1px solid var(--neon-green-dark);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+            backdrop-filter: blur(25px);
+        }
+
+        .related h3 {
+            color: var(--neon-green);
+            margin-bottom: 15px;
+            text-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+        }
+        
+        /* FIX 3: Added specific, brighter style for related links */
+        .related a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .related a:hover {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--glow-green);
+        }
+
+        form {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 8px;
+            margin: 25px 0;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+            backdrop-filter: blur(25px);
+        }
+
+        label {
+            display: block;
+            color: var(--neon-green);
+            margin: 15px 0 8px 0;
+            font-weight: 500;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.2);
+            font-size: 0.9rem;
+        }
+
+        label::before {
+            content: '$ ';
+            color: var(--neon-cyan);
+            opacity: 0.7;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 8px 0;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--neon-green);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.8;
+        }
+
+        button {
+            background: linear-gradient(135deg, #001a00, var(--neon-green-dark));
+            color: var(--neon-green);
+            padding: 16px 25px;
+            border: 1px solid var(--neon-green);
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            border-color: var(--neon-cyan);
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Статистические карточки */
+        .stats-grid {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--neon-green-dark);
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.08);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--neon-green), transparent, var(--neon-cyan));
+            z-index: -1;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card h3 {
+            font-size: 2.5rem;
+            color: var(--neon-green);
+            text-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        /* Топ-списки */
+        .top-lists {
+            display: flex;
+            gap: 30px;
+        }
+
+        .top-list {
+            flex: 1;
+        }
+
+        .top-list h3 {
+            color: var(--neon-green);
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--glow-green);
+        }
+
+        .top-list p {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .top-list p:hover {
+            padding-left: 10px;
+            border-color: var(--neon-green-dark);
+        }
+
+        .top-list a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .top-list a:hover {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--glow-green);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-left {
+                gap: 15px;
+            }
+            
+            main {
+                padding: 0 20px;
+            }
+            
+            .stats-grid, .top-lists {
+                flex-direction: column;
+            }
+        }
+
+        /* Плавные анимации */
+        * {
+            transition: all 0.3s ease;
+        }
+
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-green-dark);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-green);
+            box-shadow: 0 0 10px var(--glow-green);
+        }
+
+        /* Unified login page styles integrated */
+        .container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 2px solid var(--neon-green);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow:
+                0 0 40px rgba(0, 255, 0, 0.15),
+                inset 0 2px 0 rgba(0, 255, 0, 0.1),
+                0 0 80px rgba(0, 255, 0, 0.08),
+                inset 0 0 30px rgba(0, 255, 0, 0.05);
+            position: relative;
+            backdrop-filter: blur(25px);
+            transition: all 0.3s ease;
+            animation: neonGlow 6s ease-in-out infinite;
+        }
+
+        .card:hover {
+            box-shadow:
+                0 0 50px rgba(0, 255, 0, 0.25),
+                inset 0 1px 0 rgba(0, 255, 0, 0.25),
+                0 0 100px rgba(0, 255, 0, 0.15);
+            transform: translateY(0px);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--neon-green);
+            text-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .logo::before {
+            content: '>';
+            color: var(--neon-cyan);
+            margin-right: 8px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .logo .cursor {
+            color: var(--neon-cyan);
+            margin-left: 8px;
+            animation: blink 1.2s infinite;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .air {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--neon-green);
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.2);
+            opacity: 0.9;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--neon-green);
+            font-family: 'Fira Code', monospace;
+            transition: all 0.3s ease;
+        }
+
+        input:hover {
+            border-color: var(--text-dim);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #001a00, #003300);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .submit-btn:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            transform: translateY(-1px);
+            border-color: var(--neon-cyan);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 255, 0, 0.3);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .footer a {
+            color: var(--neon-cyan);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+        }
+
+        /* Алерты */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            border: 1px solid;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert.success {
+            background: rgba(0, 50, 0, 0.95);
+            color: var(--neon-green);
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+
+        .alert.error {
+            background: rgba(50, 0, 0, 0.95);
+            color: #ff4444;
+            border-color: #ff4444;
+            box-shadow: 0 0 15px rgba(255, 68, 68, 0.2);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Адаптивность для контейнера */
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+                padding: 15px;
+            }
+
+            .card {
+                padding: 30px 25px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AIR.forum</h1>
+        <div class="nav">
+            <div class="nav-left">
+                <a href="/">Главная</a>
+                <a href="/forum/new-topic">Новая тема</a>
+                <a href="/forum/graph-stats">Статистика</a>
+            </div>
+            <div class="user-info">
+                Пользователь: <strong>{{ current_user }}</strong>
+            </div>
+        </div>
+    </div>
+    
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
