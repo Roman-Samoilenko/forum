@@ -1,4 +1,4 @@
-# Forum Platform
+# Forum
 
 ## Техническое описание
 
