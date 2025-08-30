@@ -3,12 +3,15 @@
 {% block content %}
 <h2>Создать новую тему</h2>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data" >
     <label for="title">Заголовок темы:</label>
     <input type="text" name="title" id="title" required>
     
     <label for="content">Содержание:</label>
     <textarea name="content" id="content" rows="10" placeholder="Подробное описание темы..."></textarea>
+
+    <label for="file">Приложения(Медиафайлы):</label>
+    <input type="file" name="media" accept="image/*,video/*,audio/*">
     
     <label for="tags">Теги (через запятую):</label>
     <input type="text" name="tags" id="tags" placeholder="dev, test, help">
@@ -19,3 +22,4 @@
     <button type="submit">Создать тему</button>
 </form>
 {% endblock %}
+

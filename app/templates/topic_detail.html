@@ -4,61 +4,78 @@
 <div class="topic">
     <h2>{{ topic.title }}</h2>
     <div class="meta">
-        Автор: <a href="/forum/author/{{ topic.author }}">{{ topic.author }}</a> | 
+        Автор: <a href="/forum/author/{{ topic.author }}">{{ topic.author }}</a> |
         Создано: {{ topic.created_at.strftime('%d.%m.%Y %H:%M') }}
     </div>
-    
-    {% if topic.content %}
-    <div style="margin: 20px 0; padding: 15px; background: #193523; border-radius: 5px;">
-        {{ topic.content }}
-    </div>
-    {% endif %}
-    
+
+    {% if topic.has_media %}
+<div style="margin: 0 20px 20px 0; float: left; shape-outside: margin-box;">
+    <img src="/forum/media/{{ topic._id }}"
+         alt="Медиафайл к теме {{ topic.title }}" 
+         style="max-width: 280px; max-height: 280px; width: auto; height: auto; 
+                border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
+         loading="lazy">
+</div>
+{% endif %}
+
+{% if topic.content %}
+<div style="margin: 20px 0; padding: 15px; background: #262329; border-radius: 5px; line-height: 1.6;">
+    {{ topic.content | replace('\n', '<br>') | safe }}
+</div>
+{% endif %}
+
+<!-- Очистка float после контента -->
+<div style="clear: both;"></div>
+
     {% if topic.tags %}
-    <div class="tags">
-        Теги: 
+    <div class="tags" style="margin: 15px 0;">
+        <strong>Теги:</strong>
         {% for tag in topic.tags %}
-        <span class="tag"><a href="/forum/tag/{{ tag }}">{{ tag }}</a></span>
+        <span class="tag" style="display: inline-block; background: #302d00; padding: 4px 8px; margin: 2px; border-radius: 3px; font-size: 12px;">
+            <a href="/forum/tag/{{ tag }}" style="color: #fff; text-decoration: none;">{{ tag }}</a>
+        </span>
         {% endfor %}
     </div>
     {% endif %}
-    
+
     {% if topic.links %}
-    <div style="margin-top: 15px;">
+    <div style="margin: 15px 0;">
         <strong>Связанные ключевые слова:</strong>
         {% for link in topic.links %}
-        <span style="background: #000000; padding: 3px 8px; margin-right: 5px; border-radius: 3px; font-size: 12px;">{{ link }}</span>
+        <span style="background: #000; color: #fff; padding: 3px 8px; margin-right: 5px; border-radius: 3px; font-size: 12px; display: inline-block;">{{ link }}</span>
         {% endfor %}
     </div>
     {% endif %}
 </div>
 
-<!-- Связанные темы (граф-навигация) -->
+<!-- Связанные темы -->
 {% if related_topics %}
-<div class="related">
-    <h3>🔗 Связанные темы</h3>
-    
+<div class="related" style="margin-top: 30px; padding: 20px; background: #000; border-radius: 5px;">
+    <h3>Связанные темы</h3>
     {% if related_topics.by_author %}
-    <h4>Другие темы автора {{ topic.author }}:</h4>
-    {% for rel_topic in related_topics.by_author %}
-    <p>• <a href="/forum/topic/{{ rel_topic._id }}">{{ rel_topic.title }}</a></p>
-    {% endfor %}
+    <div style="margin-bottom: 15px;">
+        <h4>Другие темы автора {{ topic.author }}:</h4>
+        {% for rel_topic in related_topics.by_author %}
+        <p style="margin: 5px 0;">• <a href="/forum/topic/{{ rel_topic._id }}">{{ rel_topic.title }}</a></p>
+        {% endfor %}
+    </div>
     {% endif %}
-    
     {% if related_topics.by_tags %}
-    <h4>Темы с похожими тегами:</h4>
-    {% for rel_topic in related_topics.by_tags %}
-    <p>• <a href="/forum/topic/{{ rel_topic._id }}">{{ rel_topic.title }}</a></p>
-    {% endfor %}
+    <div style="margin-bottom: 15px;">
+        <h4>Темы с похожими тегами:</h4>
+        {% for rel_topic in related_topics.by_tags %}
+        <p style="margin: 5px 0;">• <a href="/forum/topic/{{ rel_topic._id }}">{{ rel_topic.title }}</a></p>
+        {% endfor %}
+    </div>
     {% endif %}
-    
     {% if related_topics.by_links %}
-    <h4>Темы с похожими ключевыми словами:</h4>
-    {% for rel_topic in related_topics.by_links %}
-    <p>• <a href="/forum/topic/{{ rel_topic._id }}">{{ rel_topic.title }}</a></p>
-    {% endfor %}
+    <div style="margin-bottom: 15px;">
+        <h4>Темы с похожими ключевыми словами:</h4>
+        {% for rel_topic in related_topics.by_links %}
+        <p style="margin: 5px 0;">• <a href="/forum/topic/{{ rel_topic._id }}">{{ rel_topic.title }}</a></p>
+        {% endfor %}
+    </div>
     {% endif %}
 </div>
 {% endif %}
 {% endblock %}
-
