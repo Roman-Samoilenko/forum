@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  forum:
+    build: .
+    networks:
+      - air-network
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    networks:
+      - air-network
+    restart: unless-stopped
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  air-network:
+    external: true
