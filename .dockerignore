@@ -1,0 +1,5 @@
+docs/
+venv/
+.git/
+__pycache__/
+.gitignore
