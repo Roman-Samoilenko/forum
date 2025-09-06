@@ -1,24 +1,24 @@
 from bson import ObjectId
-from .database import topics_collection, users_collection, tags_collection
+from .database import theme_collection, users_collection, tags_collection
 
 async def find_related_topics(topic_id: str) -> dict:
-    topic = await topics_collection.find_one({"_id": ObjectId(topic_id)})
+    topic = await theme_collection.find_one({"_id": ObjectId(topic_id)})
     if not topic:
         return {}
     
     related = {"by_author": [], "by_tags": [], "by_links": []}
     
-    related["by_author"] = await topics_collection.find(
+    related["by_author"] = await theme_collection.find(
         {"author": topic["author"], "_id": {"$ne": ObjectId(topic_id)}}
     ).limit(5).to_list(length=5)
     
     if topic.get("tags"):
-        related["by_tags"] = await topics_collection.find(
+        related["by_tags"] = await theme_collection.find(
             {"tags": {"$in": topic["tags"]}, "_id": {"$ne": ObjectId(topic_id)}}
         ).limit(5).to_list(length=5)
     
     if topic.get("links"):
-        related["by_links"] = await topics_collection.find(
+        related["by_links"] = await theme_collection.find(
             {"$text": {"$search": " ".join(topic["links"])}, "_id": {"$ne": ObjectId(topic_id)}}
         ).limit(5).to_list(length=5)
     
